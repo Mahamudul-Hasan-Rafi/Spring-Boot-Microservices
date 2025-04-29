@@ -13,4 +13,12 @@ public class AccountsMapper {
     }
 
 
+    public static Accounts mapToAccountsEntity(AccountsDto accountsDto, Accounts accounts){
+        accounts.setAccountNumber(accountsDto.getAccountNumber());
+        accounts.setAccountType(accountsDto.getAccountType());
+        accounts.setBranchAddress(accountsDto.getBranchAddress());
+        return accounts;
+    }
+
+
 }

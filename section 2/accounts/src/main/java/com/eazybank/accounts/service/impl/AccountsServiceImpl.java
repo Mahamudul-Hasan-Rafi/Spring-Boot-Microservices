@@ -13,57 +13,67 @@ import com.eazybank.accounts.mapper.CustomerMapper;
 import com.eazybank.accounts.repository.AccountsRepository;
 import com.eazybank.accounts.repository.CustomRepository;
 import com.eazybank.accounts.service.IAccountsService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.ReadOnlyFileSystemException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @AllArgsConstructor
 public class AccountsServiceImpl implements IAccountsService {
 
     public AccountsRepository accountsRepository;
-    public CustomRepository customRepository;
+    public CustomRepository customerRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(AccountsServiceImpl.class);
 
     @Override
+    @Transactional
     public void createAccount(CustomerDto customerDto){
-        Customer customer = CustomerMapper.mapToCustomerEntity(customerDto, new Customer());
+        try {
+            customerRepository.findByMobileNumber(customerDto.getMobileNumber())
+                    .ifPresent(customer -> {
+                        throw new CustomerAlreadyExistsException("Customer with mobile number " + customerDto.getMobileNumber() + " already exists.");
+                    });
 
-        Optional<Customer> customerOptional = customRepository.findByMobileNumber(customerDto.getMobileNumber());
-        if (customerOptional.isPresent()) {
-            throw new CustomerAlreadyExistsException("Customer already exists with mobile number: " + customerDto.getMobileNumber());
-        }
+            Customer savedCustomer = customerRepository.save(
+                    CustomerMapper.mapToCustomerEntity(customerDto, new Customer())
+            );
 
-//        customer.setCreatedBy("Anonymous");
-//        customer.setCreatedAt(LocalDate.now());
-
-        Customer savedcustomer = customRepository.save(customer);
-        if (savedcustomer != null) {
-            accountsRepository.save(createNewAccount(savedcustomer));
-            //System.out.println("Customer created successfully with ID: " + savedcustomer.getCustomerId());
-        } else {
-            System.out.println("Failed to create customer.");
+            Accounts newAccount = createNewAccount(savedCustomer);
+            accountsRepository.save(newAccount);
+        } catch (Exception e) {
+            log.error("Failed to create account for customer: {}", e.getMessage());
+            throw new RuntimeException("Failed to create account for customer: " + e.getMessage(), e);
         }
     }
 
     @Override
     public CustomerAccountDto fetchAccount(String mobileNumber) {
-        Customer customer = customRepository.findByMobileNumber(mobileNumber).orElseThrow(
-                ()->new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
-        );
 
-        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
-                ()->new ResourceNotFoundException("Account", "customerId", String.valueOf(customer.getCustomerId()))
+        List<Accounts> accounts =  accountsRepository.findByCustomerMobileNumber(mobileNumber).orElseThrow(
+                ()->new ResourceNotFoundException("Account", "customerId", String.valueOf(mobileNumber))
         );
 
         CustomerAccountDto customerAccountDto = new CustomerAccountDto();
 
-        customerAccountDto.setName(customer.getName());
-        customerAccountDto.setEmail(customer.getEmail());
-        customerAccountDto.setMobileNumber(customer.getMobileNumber());
-        customerAccountDto.setAccountsDto(AccountsMapper.mapToAccountsDTO(accounts, new AccountsDto()));
+        for(Accounts accounts1: accounts) {
+
+            customerAccountDto.setName(accounts1.getCustomer().getName());
+            customerAccountDto.setEmail(accounts1.getCustomer().getEmail());
+            customerAccountDto.setMobileNumber(accounts1.getCustomer().getMobileNumber());
+
+            customerAccountDto.setAccountsDto(AccountsMapper.mapToAccountsDTO(accounts1, new AccountsDto()));
+
+
+        }
 
         return customerAccountDto;
     }
@@ -81,8 +91,8 @@ public class AccountsServiceImpl implements IAccountsService {
 
             Accounts updatedAccounts = accountsRepository.save(accs);
 
-            Customer customer = customRepository.findById(updatedAccounts.getCustomerId()).orElseThrow(
-                    ()->new ResourceNotFoundException("Customer", "customerId", String.valueOf(updatedAccounts.getCustomerId()))
+            Customer customer = customerRepository.findById(updatedAccounts.getCustomer().getCustomerId()).orElseThrow(
+                    ()->new ResourceNotFoundException("Customer", "customerId", String.valueOf(updatedAccounts.getCustomer().getCustomerId()))
             );
 
             if(customer!=null){
@@ -90,7 +100,7 @@ public class AccountsServiceImpl implements IAccountsService {
                 customer.setEmail(customerAccountDto.getEmail());
                 customer.setMobileNumber(customerAccountDto.getMobileNumber());
 
-                customRepository.save(customer);
+                customerRepository.save(customer);
             }
 
             return updatedAccounts != null;
@@ -99,34 +109,43 @@ public class AccountsServiceImpl implements IAccountsService {
         return false;
     }
 
+    @Transactional
     @Override
     public boolean deleteAccount(String mobileNumber) {
+        try{
+            Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                    ()->new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
+            );
 
-        Customer customer = customRepository.findByMobileNumber(mobileNumber).orElseThrow(
-                ()->new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
-        );
+            List<Accounts> accounts = accountsRepository.findByCustomerMobileNumber(mobileNumber).orElseThrow(
+                    ()->new ResourceNotFoundException("Account", "customerId", String.valueOf(mobileNumber))
+            );
 
-        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
-                ()->new ResourceNotFoundException("Account", "customerId", String.valueOf(customer.getCustomerId()))
-        );
+            for(Accounts accounts1: accounts){
+                accountsRepository.deleteById(accounts1.getAccountNumber());
+            }
 
-        accountsRepository.deleteByCustomerId(customer.getCustomerId());
-        customRepository.deleteById(customer.getCustomerId());
+            customerRepository.deleteById(customer.getCustomerId());
 
-        return true;
+            return true;
+        }
+        catch (Exception e) {
+            log.error("Failed to delete account for mobile number {}: {}", mobileNumber, e.getMessage());
+            throw new RuntimeException("Failed to delete account for mobile number " + mobileNumber + ": " + e.getMessage(), e);
+        }
+
+
     }
 
     private Accounts createNewAccount(Customer savedcustomer) {
         Accounts accounts = new Accounts();
-        accounts.setCustomerId(savedcustomer.getCustomerId());
+        accounts.setCustomer(savedcustomer);
 
         long randomAccountNumber = 1000000000L+ (long) (Math.random() * 9000000000L);
         accounts.setAccountNumber(randomAccountNumber);
 
         accounts.setAccountType(AccountConstants.SAVINGS);
         accounts.setBranchAddress(AccountConstants.ADDRESS);
-//        accounts.setCreatedAt(savedcustomer.getCreatedAt());
-//        accounts.setCreatedBy(savedcustomer.getCreatedBy());
 
         return accounts;
     }

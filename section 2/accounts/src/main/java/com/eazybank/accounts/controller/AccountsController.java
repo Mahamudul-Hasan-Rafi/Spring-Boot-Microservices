@@ -22,7 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
-        name = "CRUD ResftAPI for EazyBank",
+        name = "CRUD RestAPI for EazyBank",
         description = "This API provides CRUD operations for EazyBank accounts. " +
                 "It allows you to create, fetch, update, and delete customer accounts."
 )

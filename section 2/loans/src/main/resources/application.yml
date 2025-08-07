@@ -1,0 +1,24 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: loans
+  devtools:
+    restart:
+      enabled: true
+  datasource:
+    url: jdbc:oracle:thin:@10.11.201.212:1531/stlbas
+    # Uncomment the following line to use an in-memory database
+    driverClassName: oracle.jdbc.OracleDriver
+    username: 'LOCKER'
+    password: 'LOCKER'
+  jpa:
+    #database-platform: org.hibernate.dialect.Oracle12cDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

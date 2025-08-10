@@ -3,7 +3,9 @@ package com.eazybank.accounts.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
@@ -13,8 +15,8 @@ import lombok.Data;
         requiredProperties = {"accountNumber", "accountType", "branchAddress"})
 public class AccountsDto {
     @Schema(description = "Account Number")
-    @NotEmpty(message = "Account number cannot be empty")
-    @Pattern(regexp = "(^$|[0-9]{10})", message = "Account number must be 10 digits")
+    @NotNull(message = "Account number cannot be empty")
+    @Digits(integer = 10, fraction = 0, message = "Account number must be 10 digits")
     private Long accountNumber;
 
     @Schema(description = "Account Type", example = "Savings")

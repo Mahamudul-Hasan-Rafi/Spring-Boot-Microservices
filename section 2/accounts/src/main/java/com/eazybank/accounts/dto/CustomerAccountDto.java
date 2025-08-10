@@ -1,10 +1,7 @@
 package com.eazybank.accounts.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
@@ -28,6 +25,6 @@ public class CustomerAccountDto {
     private String mobileNumber;
 
     @Schema(description = "Accounts details")
-    @NotEmpty(message = "Accounts details cannot be empty")
+    @NotNull(message = "Accounts details cannot be empty")
     private AccountsDto accountsDto;
 }

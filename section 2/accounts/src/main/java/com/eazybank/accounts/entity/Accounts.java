@@ -5,8 +5,14 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
 
 @Entity
+@Audited
+@AuditOverride(forClass=BaseEntity.class, isAudited=false)
+@AuditTable(value = "accounts_audit")
 @Getter @Setter @ToString @AllArgsConstructor
 @NoArgsConstructor
 public class Accounts extends BaseEntity {
@@ -30,8 +36,6 @@ public class Accounts extends BaseEntity {
         if (this.accountNumber == null) {
             this.accountNumber=accountNumber;
         }
-        else{
-            throw new IllegalArgumentException("Account number must be a positive number");
-        }
+
     }
 }

@@ -82,6 +82,7 @@ public class AccountsServiceImpl implements IAccountsService {
     public boolean updateAccount(CustomerAccountDto customerAccountDto) {
         AccountsDto accountsDto = customerAccountDto.getAccountsDto();
 
+
         if(accountsDto!=null){
             Accounts accounts = accountsRepository.findById(accountsDto.getAccountNumber()).orElseThrow(
                     ()->new ResourceNotFoundException("Account", "accountNumber", String.valueOf(accountsDto.getAccountNumber()))
@@ -133,7 +134,6 @@ public class AccountsServiceImpl implements IAccountsService {
             log.error("Failed to delete account for mobile number {}: {}", mobileNumber, e.getMessage());
             throw new RuntimeException("Failed to delete account for mobile number " + mobileNumber + ": " + e.getMessage(), e);
         }
-
 
     }
 

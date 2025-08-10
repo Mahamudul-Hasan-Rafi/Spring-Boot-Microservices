@@ -20,8 +20,8 @@ public class LoansDto {
     @Schema(description = "Mobile Number", example = "0123456789")
     private String mobileNumber;
 
-    @NotEmpty
-    @Pattern(message = "Loan number must be alphanumeric", regexp = "^[a-zA-Z0-9]{6}")
+    @NotEmpty(message = "Loan number cannot be empty")
+    @Pattern(message = "Loan number must be alphanumeric", regexp = "^[a-zA-Z0-9]{10}")
     @Schema(description = "Loan Number", example = "LN123456")
     private String loanNumber;
 

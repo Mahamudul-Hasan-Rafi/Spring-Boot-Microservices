@@ -3,6 +3,7 @@ package com.eazybank.loans.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +18,7 @@ public class ErrorResponseDto {
     private String apiPath;
 
     @Schema(description = "Error code representing the error happened", example = "Resource not found")
-    private String errorCode;
+    private HttpStatus errorCode;
 
     @Schema(description = "Detailed error message", example = "The requested resource could not be found")
     private String errorMessage;

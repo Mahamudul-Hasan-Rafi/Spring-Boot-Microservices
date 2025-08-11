@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 @Schema(
         description = "Schema to hold Loan details",
@@ -23,6 +25,7 @@ public class LoansDto {
     @NotEmpty(message = "Loan number cannot be empty")
     @Pattern(message = "Loan number must be alphanumeric", regexp = "^[a-zA-Z0-9]{10}")
     @Schema(description = "Loan Number", example = "LN123456")
+    @Setter(AccessLevel.NONE)
     private String loanNumber;
 
     @NotEmpty(message = "Loan type cannot be empty")
@@ -40,4 +43,10 @@ public class LoansDto {
     @PositiveOrZero(message = "Outstanding amount must be zero or positive")
     @Schema(description = "Outstanding Amount", example = "300000")
     private int outstandingAmount;
+
+    public void setLoanNumber(String loanNumber) {
+        if (loanNumber == null) {
+            this.loanNumber = loanNumber;
+        }
+    }
 }

@@ -1,0 +1,55 @@
+services:
+  accounts:
+    image: rafi/accounts:v1
+    container_name: accounts_ms
+    ports:
+      - 8080:8080
+    deploy:
+        replicas: 1
+        resources:
+            limits:
+                cpus: '0.1'
+                memory: 1024M
+            reservations:
+                cpus: '0.1'
+                memory: 256M
+    networks:
+        - accounts_net
+
+  loans:
+    image: rafi/loans:v1
+    container_name: loans_ms
+    ports:
+      - 8090:8090
+    deploy:
+        replicas: 1
+        resources:
+            limits:
+                cpus: '0.1'
+                memory: 1024M
+            reservations:
+                cpus: '0.1'
+                memory: 256M
+    networks:
+        - accounts_net
+
+  cards:
+    image: rafi/cards:v1
+    container_name: cards_ms
+    ports:
+      - 9000:9000
+    deploy:
+        replicas: 1
+        resources:
+            limits:
+                cpus: '0.1'
+                memory: 1024M
+            reservations:
+                cpus: '0.1'
+                memory: 256M
+    networks:
+        - accounts_net
+
+networks:
+    accounts_net:
+        driver: bridge

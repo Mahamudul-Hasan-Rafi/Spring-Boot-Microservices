@@ -1,10 +1,6 @@
 package com.eazybank.accounts.controller;
 
-import com.eazybank.accounts.constants.AccountConstants;
-import com.eazybank.accounts.dto.CustomerAccountDto;
-import com.eazybank.accounts.dto.CustomerDto;
-import com.eazybank.accounts.dto.ErrorResponseDto;
-import com.eazybank.accounts.dto.ResponseDto;
+import com.eazybank.accounts.dto.*;
 import com.eazybank.accounts.service.IAccountsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,13 +9,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraintvalidation.SupportedValidationTarget;
 import lombok.AllArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Tag(
         name = "CRUD RestAPI for EazyBank",
@@ -27,12 +25,16 @@ import org.springframework.web.bind.annotation.*;
                 "It allows you to create, fetch, update, and delete customer accounts."
 )
 @RestController
-@RequestMapping(path = "/api", produces= {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor
 @Validated
 public class AccountsController {
 
     IAccountsService iAccountsService;
+
+    Environment environment;
+
+    AccountDetailsDto accountDetailsDto;
 
     @Operation(
             summary = "Create a new customer account",
@@ -59,7 +61,7 @@ public class AccountsController {
     }
     )
     @PostMapping(path = "/create")
-    public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody CustomerDto customerDto){
+    public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody CustomerDto customerDto) {
         iAccountsService.createAccount(customerDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -99,8 +101,8 @@ public class AccountsController {
     }
     )
     @GetMapping(path = "/fetch")
-    public ResponseEntity<CustomerAccountDto> fetchAccount(@RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber){
-            CustomerAccountDto customerAccountDto = iAccountsService.fetchAccount(mobileNumber);
+    public ResponseEntity<CustomerAccountDto> fetchAccount(@RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber) {
+        CustomerAccountDto customerAccountDto = iAccountsService.fetchAccount(mobileNumber);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(customerAccountDto);
@@ -122,15 +124,14 @@ public class AccountsController {
                     description = "Internal Server Error"
             )
     })
-    @PutMapping(path="/update")
-    public ResponseEntity<ResponseDto> updateAccount(@Valid @RequestBody CustomerAccountDto customerAccountDto){
+    @PutMapping(path = "/update")
+    public ResponseEntity<ResponseDto> updateAccount(@Valid @RequestBody CustomerAccountDto customerAccountDto) {
         boolean updated = iAccountsService.updateAccount(customerAccountDto);
-        if(updated){
+        if (updated) {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ResponseDto("200", "Account Updated Succesfully"));
-        }
-        else{
+        } else {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(new ResponseDto("404", "Account Not Found"));
@@ -153,18 +154,46 @@ public class AccountsController {
             )
     })
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDto> deleteAccount(@RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile Number must b 10 digits") String mobileNumber){
+    public ResponseEntity<ResponseDto> deleteAccount(@RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile Number must b 10 digits") String mobileNumber) {
         boolean deleted = iAccountsService.deleteAccount(mobileNumber);
-        if(deleted){
+        if (deleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ResponseDto("200", "Account Deleted Succesfully"));
-        }
-        else{
+        } else {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(new ResponseDto("404", "Account Not Found"));
         }
+    }
+
+
+    @GetMapping(path = "/java_version")
+    public ResponseEntity<Map<String, String>> getJavaVersion() {
+        String javaVersion = System.getProperty("java.version");
+        String env_javaVersion = environment.getProperty("JAVA_HOME");
+        String env_mavenVersion = environment.getProperty("MAVEN_HOME");
+
+        try {
+            Map<String, String> envInfo = Map.of(
+                    "java.version", javaVersion,
+                    "JAVA_HOME", env_javaVersion
+            );
+
+            return ResponseEntity.ok(envInfo);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to retrieve environment variables", "message", e.getMessage()));
+        }
+    }
+
+
+    @GetMapping(path = "/account-details")
+    public ResponseEntity<AccountDetailsDto> getAccountDetails() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(accountDetailsDto);
     }
 
 }

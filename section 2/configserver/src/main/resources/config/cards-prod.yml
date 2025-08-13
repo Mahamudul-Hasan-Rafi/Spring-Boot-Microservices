@@ -1,0 +1,15 @@
+account:
+  version: '3.0.0'
+  details:
+    name: 'CARDS PROD'
+    description: 'CARD Account Service'
+  contact:
+    email:
+      - 'cardprod30@gmail.com'
+      - 'cardprod67@gmail.com'
+    phone:
+      - '1234567890'
+      - '0987654321'
+  products:
+    - 'Credit Visa Card'
+    - 'Debit Visa Card'

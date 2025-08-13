@@ -1,0 +1,24 @@
+account:
+  version: '1.0.0'
+  details:
+    name: 'LOANS'
+    description: 'LOAN Account Service'
+  contact:
+    email:
+      - 'liu30@gmail.com'
+      - 'liko67@gmail.com'
+    phone:
+      - '1234567890'
+      - '0987654321'
+  products:
+    - 'Loan Account'
+    - 'Personal Loan'
+    - 'Home Loan'
+    - 'Car Loan'
+    - 'Education Loan'
+    - 'Business Loan'
+    - 'Gold Loan'
+    - 'Travel Loan'
+    - 'Medical Loan'
+    - 'Wedding Loan'
+

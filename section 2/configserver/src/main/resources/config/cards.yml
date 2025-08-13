@@ -1,0 +1,15 @@
+account:
+  version: '1.0.0'
+  details:
+    name: 'CARDS'
+    description: 'CARD Account Service'
+  contact:
+    email:
+      - 'lix30@gmail.com'
+      - 'card67@gmail.com'
+    phone:
+      - '1234567890'
+      - '0987654321'
+  products:
+    - 'Credit Visa Card'
+    - 'Debit Visa Card'

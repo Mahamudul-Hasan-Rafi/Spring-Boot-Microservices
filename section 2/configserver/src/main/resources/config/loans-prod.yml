@@ -1,0 +1,15 @@
+account:
+  version: '3.0.0'
+  details:
+    name: 'LOANS PROD'
+    description: 'LOANS Account Service'
+  contact:
+    email:
+      - 'loansprod30@gmail.com'
+      - 'loansprod67@gmail.com'
+    phone:
+      - '1234567890'
+      - '0987654321'
+  products:
+    - 'Loan Against Property'
+    - 'Demand Loan'

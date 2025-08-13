@@ -1,0 +1,14 @@
+account:
+  version: '2.0.0'
+  details:
+    name: 'DEV'
+    description: 'DEV Account Service'
+  contact:
+    email:
+      - 'pagluu@gmail.com'
+      - 'dev45@gmail.com'
+    phone:
+      - '+990129042234'
+      - '5662389239'
+  products:
+    - 'Loan Account'

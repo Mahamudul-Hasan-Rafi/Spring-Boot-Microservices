@@ -1,0 +1,22 @@
+account:
+  version: '1.0.0'
+  details:
+    name: 'EMOB'
+    description: 'EMOB Account Service'
+  contact:
+    email:
+      - 'emob30@gmail.com'
+      - 'rafi30@gmail.com'
+    phone:
+      - '1234567890'
+      - '0987654321'
+  products:
+    - 'Savings Account'
+    - 'Current Account'
+    - 'Fixed Deposit Account'
+    - 'Recurring Deposit Account'
+    - 'Loan Account'
+
+
+
+

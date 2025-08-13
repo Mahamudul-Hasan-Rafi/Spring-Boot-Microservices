@@ -1,0 +1,15 @@
+account:
+  version: '2.0.0'
+  details:
+    name: 'LOANS DEV'
+    description: 'LOAN Account Service'
+  contact:
+    email:
+      - 'loandev30@gmail.com'
+      - 'loandev67@gmail.com'
+    phone:
+      - '1234567890'
+      - '0987654321'
+  products:
+    - 'Agricultural Loan'
+    - 'Personal Loan'

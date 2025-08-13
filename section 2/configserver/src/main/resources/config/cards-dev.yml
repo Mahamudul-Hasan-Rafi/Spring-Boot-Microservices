@@ -1,0 +1,15 @@
+account:
+  version: '2.0.0'
+  details:
+    name: 'CARDS DEV'
+    description: 'CARD Account Service'
+  contact:
+    email:
+      - 'carddev30@gmail.com'
+      - 'carddev67@gmail.com'
+    phone:
+      - '1234567890'
+      - '0987654321'
+  products:
+    - 'Credit Visa Card'
+    - 'Debit Visa Card'

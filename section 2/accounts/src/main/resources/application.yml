@@ -6,12 +6,6 @@ spring:
   devtools:
     restart:
       enabled: true
-  datasource:
-    url: jdbc:oracle:thin:@10.11.201.55:1525/ucbldb
-    # Uncomment the following line to use an in-memory database
-    driverClassName: oracle.jdbc.OracleDriver
-    username: 'EMOB'
-    password: 'emob'
   jpa:
     #database-platform: org.hibernate.dialect.Oracle12cDialect
     hibernate:
@@ -19,34 +13,16 @@ spring:
     show-sql: true
 
   config:
-    import: classpath:/application_${spring.profiles.active:default}.yml
+    import: "optional:configserver:http://${CONFIG_SERVER_USERNAME:configuser}:${CONFIG_SERVER_PASSWORD:configpass}@localhost:8071/"
 
   profiles:
-    active: prod
+    active: default
+
 
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
-account:
-  version: '1.0.0'
-  details:
-    name: 'EMOB'
-    description: 'EMOB Account Service'
-  contact:
-    email:
-      - 'emob30@gmail.com'
-      - 'rafi30@gmail.com'
-    phone:
-      - '1234567890'
-      - '0987654321'
-  products:
-    - 'Savings Account'
-    - 'Current Account'
-    - 'Fixed Deposit Account'
-    - 'Recurring Deposit Account'
-    - 'Loan Account'
 
 
 

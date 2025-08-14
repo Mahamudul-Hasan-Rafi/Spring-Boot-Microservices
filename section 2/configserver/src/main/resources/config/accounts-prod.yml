@@ -13,3 +13,5 @@ account:
   products:
     - 'Savings Account'
     - 'Current Account'
+    - 'Fixed Deposit Account'
+    - 'Recurring Deposit Account'

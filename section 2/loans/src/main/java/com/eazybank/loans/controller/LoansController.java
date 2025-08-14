@@ -2,6 +2,7 @@ package com.eazybank.loans.controller;
 
 import com.eazybank.loans.constants.LoansConstants;
 import com.eazybank.loans.dto.ErrorResponseDto;
+import com.eazybank.loans.dto.LoanDetailsDto;
 import com.eazybank.loans.dto.LoansDto;
 import com.eazybank.loans.dto.ResponseDto;
 import com.eazybank.loans.service.ILoansService;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class LoansController {
     private ILoansService iLoansService;
+
+    LoanDetailsDto loanDetailsDto;
 
     // Define endpoints for CRUD operations on loans here
     @Operation(
@@ -169,6 +172,13 @@ public class LoansController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(LoansConstants.STATUS_417, LoansConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @GetMapping(path = "/loan-details")
+    public ResponseEntity<LoanDetailsDto> getAccountDetails() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(loanDetailsDto);
     }
 
 }

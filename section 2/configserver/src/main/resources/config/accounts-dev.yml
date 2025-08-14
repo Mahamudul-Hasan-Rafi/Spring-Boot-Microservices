@@ -12,3 +12,11 @@ account:
       - '5662389239'
   products:
     - 'Loan Account'
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@10.11.201.55:1525/ucbldb
+    # Uncomment the following line to use an in-memory database
+    driverClassName: oracle.jdbc.OracleDriver
+    username: 'EMOB'
+    password: 'emob'

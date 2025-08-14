@@ -9,3 +9,4 @@ import java.util.Map;
 public record AccountDetailsDto(String version, Map<String, String> details,
                                 Map<String, List<String>> contact, List<String> products) {
 }
+

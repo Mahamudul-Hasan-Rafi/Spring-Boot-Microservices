@@ -1,4 +1,4 @@
-account:
+loan:
   version: '1.0.0'
   details:
     name: 'LOANS'

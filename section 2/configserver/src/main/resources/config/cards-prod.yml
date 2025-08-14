@@ -1,4 +1,4 @@
-account:
+card:
   version: '3.0.0'
   details:
     name: 'CARDS PROD'

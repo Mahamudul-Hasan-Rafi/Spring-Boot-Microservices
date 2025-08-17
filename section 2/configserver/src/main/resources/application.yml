@@ -5,13 +5,21 @@ spring:
   profiles:
     active: native
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
   cloud:
     config:
       server:
         native:
           #search-locations: "classpath:/config/"
           search-locations: "file:///F://Electron"
+          refresh-rate: 30
 
+  
   security:
     user:
       name: ${CONFIG_SERVER_USERNAME:configuser}
@@ -19,4 +27,5 @@ spring:
 
 server:
   port: 8071
+
 

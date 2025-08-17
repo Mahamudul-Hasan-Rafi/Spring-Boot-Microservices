@@ -22,3 +22,25 @@ loan:
     - 'Medical Loan'
     - 'Wedding Loan'
 
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@10.11.201.212:1531/stlbas
+    # Uncomment the following line to use an in-memory database
+    driverClassName: oracle.jdbc.OracleDriver
+    username: 'LOCKER'
+    password: 'LOCKER'
+    hikari:
+      maximum-pool-size: 10
+      # Minimum idle connections (default: same as maximum-pool-size)
+      minimum-idle: 2
+      # Max lifetime of a connection (ms, default: 1800000 = 30 mins)
+      max-lifetime: 600000  # 10 mins
+      # Timeout for acquiring a connection (ms, default: 30000 = 30s)
+      connection-timeout: 10000  # 5s
+      # Test connections before giving them to the app (default: false)
+      connection-test-query: SELECT 1 FROM DUAL
+      # How long an idle connection stays in the pool (ms, default: 600000 = 10 mins)
+      idle-timeout: 300000  # 5 mins
+      # Enable leak detection (logs abandoned connections)
+      leak-detection-threshold: 5000  # 5s
+

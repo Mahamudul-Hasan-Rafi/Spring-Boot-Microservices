@@ -12,17 +12,32 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  rabbitmq:
+    host: host.docker.internal
+    port: 5672
+    username: guest
+    password: guest
+
   config:
-    import: "optional:configserver:http://${CONFIG_SERVER_USERNAME:configuser}:${CONFIG_SERVER_PASSWORD:configpass}@localhost:8071/"
+    import: "configserver:http://myuser:mypassword@host.docker.internal:8071/"
 
   profiles:
-    active: default
+    active: dev
 
 
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
 
 
 

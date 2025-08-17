@@ -16,7 +16,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   rabbitmq:
-    host: host.docker.internal
+    #host: host.docker.internal
+    host: localhost
     port: 5672
     username: guest
     password: guest
@@ -26,7 +27,8 @@ spring:
     active: dev
 
   config:
-    import: "configserver:http://myuser:mypassword@host.docker.internal:8071"
+    #import: "configserver:http://myuser:mypassword@host.docker.internal:8071"
+    import: "configserver:http://myuser:mypassword@localhost:8071"
 
 logging:
   level:

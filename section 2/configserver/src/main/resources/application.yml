@@ -16,7 +16,7 @@ spring:
       server:
         native:
           #search-locations: "classpath:/config/"
-          search-locations: "file:///F://Electron"
+          search-locations: "file:///C://Users//USER//Microservice//config"
           refresh-rate: 30
 
   

@@ -11,7 +11,6 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "account")
 @Getter
 @Setter
-@AllArgsConstructor
 public class AccountDetailsDto {
     private String version;
     private Map<String, String> details;

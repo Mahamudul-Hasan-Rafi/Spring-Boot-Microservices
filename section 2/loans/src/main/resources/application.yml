@@ -14,7 +14,7 @@ spring:
 
   rabbitmq:
     #host: host.docker.internal
-    host: localhost
+    host: 10.11.204.202
     port: 5672
     username: guest
     password: guest
@@ -23,14 +23,18 @@ spring:
     active: dev
 
   config:
-    #import: "configserver:http://myuser:mypassword@host.docker.internal:8071"
-    import: "configserver:http://myuser:mypassword@localhost:8071"
+    import: optional:configserver:http://myuser:mypassword@host.docker.internal:8071/
 
 
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.cloud: DEBUG
+    org.springframework.context: DEBUG
+    org.springframework.amqp: DEBUG
+    org.springframework.rabbit: DEBUG
+
 
 management:
   endpoints:

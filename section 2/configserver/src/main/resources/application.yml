@@ -6,7 +6,7 @@ spring:
     active: native
 
   rabbitmq:
-    host: localhost
+    host: 10.11.204.202
     port: 5672
     username: guest
     password: guest
@@ -18,7 +18,11 @@ spring:
           #search-locations: "classpath:/config/"
           search-locations: "file:///C://Users//USER//Microservice//config"
           refresh-rate: 30
-
+    bus:
+      enabled: true
+      refresh:
+        enabled: true
+  
   
   security:
     user:
@@ -28,4 +32,19 @@ spring:
 server:
   port: 8071
 
+logging:
+  level:
+    org.springframework.amqp: DEBUG
+    org.springframework.cloud.config: DEBUG
+    org.springframework.cloud.bus: DEBUG
+
+
+management:
+  endpoints:
+    web:
+    exposure:
+      include: "*"
+  endpoint:
+    health:
+    show-details: always
 

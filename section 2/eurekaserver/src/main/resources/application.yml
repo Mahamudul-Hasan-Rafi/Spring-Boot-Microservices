@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: eurekaserver
+  config:
+    import: optional:configserver:http://myuser:mypassword@localhost:8071/
+    fail-fast: true
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

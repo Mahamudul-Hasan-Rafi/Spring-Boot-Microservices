@@ -1,22 +1,3 @@
-# First stage: Build the application using Maven and OpenJDK 21
-FROM eclipse-temurin:21-jdk-alpine AS build
-
-RUN apk add --no-cache maven
-
-
-# Set a non-root user for security
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the project files to the container
-COPY . .
-
-# Run the Maven build (clean and install)
-RUN mvn clean install -DskipTests
-
-# Second stage: Create a lightweight image with OpenJDK 21 JRE
 FROM eclipse-temurin:21-jre-alpine
 
 # Set a non-root user for security
@@ -26,7 +7,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
 
 # Copy the JAR file from the build stage
-COPY --from=build /app/target/accounts-0.0.1-SNAPSHOT.jar app.jar
+COPY target/accounts-0.0.1-SNAPSHOT.jar app.jar
 
 # Adjust JVM options for better performance in containers
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"

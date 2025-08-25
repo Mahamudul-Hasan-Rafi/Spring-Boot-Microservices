@@ -11,6 +11,7 @@ import com.eazybank.loans.service.ILoansService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -27,9 +28,9 @@ public class LoansServiceImpl implements ILoansService {
 
     @Override
     public void createLoan(String mobileNumber) {
-        Optional<Loans> loans = loansRepository.findByMobileNumber(mobileNumber);
+        Optional<List<Loans>> loans = loansRepository.findByMobileNumber(mobileNumber);
 
-        if (loans.isPresent()) {
+        if (loans.isPresent() && !loans.get().isEmpty()) {
             throw new LoansAlreadyExistsException("Loan already exists for mobile number: " + mobileNumber);
         }
 
@@ -61,11 +62,11 @@ public class LoansServiceImpl implements ILoansService {
     }
 
     @Override
-    public LoansDto fetchLoanDetails(String mobileNumber) {
-        Loans loans = loansRepository.findByMobileNumber(mobileNumber)
+    public List<LoansDto> fetchLoanDetails(String mobileNumber) {
+        List<Loans> loans = loansRepository.findByMobileNumber(mobileNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan", "mobileNumber", mobileNumber));
 
-        return mapToLoansDto(loans, new LoansDto());
+        return loans.stream().map(loan -> mapToLoansDto(loan, new LoansDto())).toList();
     }
 
     @Override
@@ -79,9 +80,12 @@ public class LoansServiceImpl implements ILoansService {
 
     @Override
     public boolean deleteLoan(String mobileNumber) {
-        Loans loans = loansRepository.findByMobileNumber(mobileNumber)
+        List<Loans> loans = loansRepository.findByMobileNumber(mobileNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan", "mobileNumber", mobileNumber));
-        loansRepository.delete(loans);
+
+        for (Loans loan : loans) {
+            loansRepository.delete(loan);
+        }
         return true;
     }
 }

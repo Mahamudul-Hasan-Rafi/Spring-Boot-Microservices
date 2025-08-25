@@ -2,6 +2,8 @@ package com.eazybank.cards.service;
 
 import com.eazybank.cards.dto.CardsDto;
 
+import java.util.List;
+
 public interface ICardsService {
 
     /**
@@ -13,7 +15,7 @@ public interface ICardsService {
      * @param mobileNumber - Input mobile Number
      * @return Card Details based on a given mobileNumber
      */
-    CardsDto fetchCard(String mobileNumber);
+    List<CardsDto> fetchCard(String mobileNumber);
 
     /**
      * @param cardsDto - CardsDto Object

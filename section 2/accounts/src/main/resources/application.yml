@@ -20,7 +20,7 @@ spring:
     password: guest
 
   config:
-    import: optional:configserver:http://myuser:mypassword@host.docker.internal:8071/
+    import: optional:configserver:http://myuser:mypassword@localhost:8071/
 
   profiles:
     active: dev

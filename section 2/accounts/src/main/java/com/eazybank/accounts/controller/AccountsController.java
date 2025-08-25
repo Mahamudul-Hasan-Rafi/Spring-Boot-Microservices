@@ -196,4 +196,11 @@ public class AccountsController {
                 .body(accountDetailsDto);
     }
 
+    @GetMapping(path = "/customer-details")
+    public ResponseEntity<CustomerDetailsDto> getCustomerDetails(@RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber) {
+        CustomerDetailsDto customerDetailsDto = iAccountsService.fetchCustomerDetails(mobileNumber);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(customerDetailsDto);
+    }
 }

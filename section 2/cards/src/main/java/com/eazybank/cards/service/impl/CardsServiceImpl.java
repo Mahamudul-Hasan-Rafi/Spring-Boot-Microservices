@@ -11,6 +11,7 @@ import com.eazybank.cards.service.ICardsService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -25,8 +26,8 @@ public class CardsServiceImpl implements ICardsService {
      */
     @Override
     public void createCard(String mobileNumber) {
-        Optional<Cards> optionalCards = cardsRepository.findByMobileNumber(mobileNumber);
-        if (optionalCards.isPresent()) {
+        Optional<List<Cards>> optionalCards = cardsRepository.findByMobileNumber(mobileNumber);
+        if (optionalCards.isPresent() && !optionalCards.get().isEmpty()) {
             throw new CardAlreadyExistsException("Card already registered with given mobileNumber " + mobileNumber);
         }
         cardsRepository.save(createNewCard(mobileNumber));
@@ -53,11 +54,13 @@ public class CardsServiceImpl implements ICardsService {
      * @return Card Details based on a given mobileNumber
      */
     @Override
-    public CardsDto fetchCard(String mobileNumber) {
-        Cards cards = cardsRepository.findByMobileNumber(mobileNumber).orElseThrow(
+    public List<CardsDto> fetchCard(String mobileNumber) {
+        List<Cards> cards = cardsRepository.findByMobileNumber(mobileNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Card", "mobileNumber", mobileNumber)
         );
-        return CardsMapper.mapToCardsDto(cards, new CardsDto());
+        return cards.stream()
+                .map(card -> CardsMapper.mapToCardsDto(card, new CardsDto()))
+                .toList();
     }
 
     /**
@@ -79,10 +82,14 @@ public class CardsServiceImpl implements ICardsService {
      */
     @Override
     public boolean deleteCard(String mobileNumber) {
-        Cards cards = cardsRepository.findByMobileNumber(mobileNumber).orElseThrow(
+        List<Cards> cards = cardsRepository.findByMobileNumber(mobileNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Card", "mobileNumber", mobileNumber)
         );
-        cardsRepository.deleteById(cards.getCardId());
+
+        for (Cards card : cards) {
+            cardsRepository.deleteById(card.getCardId());
+        }
+
         return true;
     }
 

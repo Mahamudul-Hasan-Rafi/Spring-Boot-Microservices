@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: gatewayserver
+  devtools:
+    restart:
+      enabled: true
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true
+  rabbitmq:
+    #host: host.docker.internal
+    host: 10.11.204.202
+    port: 5672
+    username: guest
+    password: guest
+
+  config:
+    import: configserver:http://myuser:mypassword@localhost:8071/
+
+
+logging:
+  level:
+    org.springframework.cloud: DEBUG
+    org.springframework.context: DEBUG
+    org.springframework.amqp: DEBUG
+    org.springframework.rabbit: DEBUG
+    com:
+      eazybank:
+        gatewayserver: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+  endpoint:
+    gateway:
+      access: unrestricted
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+info:
+  app:
+    name: accounts
+    description: Accounts Service
+    version: 1.0.0
+
+
+
+
+

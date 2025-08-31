@@ -10,6 +10,8 @@ import com.eazybank.loans.repository.LoansRepository;
 import com.eazybank.loans.service.ILoansService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,8 @@ import static com.eazybank.loans.mapper.LoansMapper.mapToLoansDto;
 
 @Service
 public class LoansServiceImpl implements ILoansService {
+    public static final Logger logger = LoggerFactory.getLogger(LoansServiceImpl.class);
+
     private final LoansRepository loansRepository;
 
     @Autowired
@@ -62,7 +66,8 @@ public class LoansServiceImpl implements ILoansService {
     }
 
     @Override
-    public List<LoansDto> fetchLoanDetails(String mobileNumber) {
+    public List<LoansDto> fetchLoanDetails(String correlationId, String mobileNumber) {
+        logger.debug("Correlation ID in Loan Service: {}", correlationId);
         List<Loans> loans = loansRepository.findByMobileNumber(mobileNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan", "mobileNumber", mobileNumber));
 

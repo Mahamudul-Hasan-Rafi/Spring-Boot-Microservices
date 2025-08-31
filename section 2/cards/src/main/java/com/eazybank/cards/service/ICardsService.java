@@ -15,7 +15,7 @@ public interface ICardsService {
      * @param mobileNumber - Input mobile Number
      * @return Card Details based on a given mobileNumber
      */
-    List<CardsDto> fetchCard(String mobileNumber);
+    List<CardsDto> fetchCard(String correlationId, String mobileNumber);
 
     /**
      * @param cardsDto - CardsDto Object

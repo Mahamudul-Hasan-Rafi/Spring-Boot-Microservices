@@ -25,6 +25,11 @@ spring:
   profiles:
     active: dev
 
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+
 
 logging:
   level:
@@ -34,6 +39,9 @@ logging:
     org.springframework.context: DEBUG
     org.springframework.amqp: DEBUG
     org.springframework.rabbit: DEBUG
+    com:
+      eazybank:
+        accounts: DEBUG
 
 management:
   endpoints:
@@ -64,6 +72,16 @@ info:
     name: accounts
     description: Accounts Service
     version: 1.0.0
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000
+      eventConsumerBufferSize: 10
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
 
 
 

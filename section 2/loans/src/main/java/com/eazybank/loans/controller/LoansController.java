@@ -92,9 +92,9 @@ public class LoansController {
             )
     })
     @GetMapping("/fetch")
-    public ResponseEntity<List<LoansDto>> fetchLoanDetails(@Valid @RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber) {
+    public ResponseEntity<List<LoansDto>> fetchLoanDetails(@RequestHeader("eazybank-correlation-id") String correlationId, @Valid @RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber) {
         // Logic to fetch loan details
-        List<LoansDto> loansDto = iLoansService.fetchLoanDetails(mobileNumber);
+        List<LoansDto> loansDto = iLoansService.fetchLoanDetails(correlationId, mobileNumber);
         return ResponseEntity.status(HttpStatus.OK).body(loansDto);
     }
 

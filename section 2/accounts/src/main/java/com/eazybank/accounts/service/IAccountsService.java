@@ -14,5 +14,5 @@ public interface IAccountsService {
 
     boolean deleteAccount(String mobileNumber);
 
-    CustomerDetailsDto fetchCustomerDetails(String mobileNumber);
+    CustomerDetailsDto fetchCustomerDetails(String correlationId, String mobileNumber);
 }

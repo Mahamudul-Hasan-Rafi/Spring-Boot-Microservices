@@ -137,7 +137,9 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     @Override
-    public CustomerDetailsDto fetchCustomerDetails(String mobileNumber) {
+    public CustomerDetailsDto fetchCustomerDetails(String correlationId, String mobileNumber) {
+        log.debug("Correlation ID in Account Service: {}", correlationId);
+
         Optional<CustomerDto> customerDto = customerRepository.findByMobileNumber(mobileNumber).map(
                 customer -> CustomerMapper.mapToCustomerDTO(customer, new CustomerDto())
         );
@@ -150,8 +152,8 @@ public class AccountsServiceImpl implements IAccountsService {
                 () -> new ResourceNotFoundException("Account", "customerId", String.valueOf(mobileNumber))
         );
 
-        ResponseEntity<List<CardsDto>> cardsEntities = cardFeignClient.fetchCardDetails(mobileNumber);
-        ResponseEntity<List<LoansDto>> loansEntities = loanFeignClient.fetchLoanDetails(mobileNumber);
+        ResponseEntity<List<CardsDto>> cardsEntities = cardFeignClient.fetchCardDetails(correlationId, mobileNumber);
+        ResponseEntity<List<LoansDto>> loansEntities = loanFeignClient.fetchLoanDetails(correlationId, mobileNumber);
 
         CustomerDetailsDto customerDetailsDto = new CustomerDetailsDto();
 

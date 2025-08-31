@@ -7,7 +7,7 @@ import java.util.List;
 public interface ILoansService {
     void createLoan(String mobileNumber);
 
-    List<LoansDto> fetchLoanDetails(String mobileNumber);
+    List<LoansDto> fetchLoanDetails(String correlationid, String mobileNumber);
 
     boolean updateLoan(LoansDto loansDto);
 

@@ -9,6 +9,8 @@ import com.eazybank.cards.mapper.CardsMapper;
 import com.eazybank.cards.repository.CardsRepository;
 import com.eazybank.cards.service.ICardsService;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.Random;
 @Service
 @AllArgsConstructor
 public class CardsServiceImpl implements ICardsService {
+
+    public static final Logger logger = LoggerFactory.getLogger(CardsServiceImpl.class);
 
     private CardsRepository cardsRepository;
 
@@ -54,7 +58,9 @@ public class CardsServiceImpl implements ICardsService {
      * @return Card Details based on a given mobileNumber
      */
     @Override
-    public List<CardsDto> fetchCard(String mobileNumber) {
+    public List<CardsDto> fetchCard(String correlationId, String mobileNumber) {
+        logger.debug("Correlation ID in Card Service: {}", correlationId);
+
         List<Cards> cards = cardsRepository.findByMobileNumber(mobileNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Card", "mobileNumber", mobileNumber)
         );

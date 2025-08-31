@@ -34,7 +34,9 @@ logging:
     org.springframework.context: DEBUG
     org.springframework.amqp: DEBUG
     org.springframework.rabbit: DEBUG
-
+    com:
+      eazybank:
+        loans: DEBUG
 
 management:
   endpoints:

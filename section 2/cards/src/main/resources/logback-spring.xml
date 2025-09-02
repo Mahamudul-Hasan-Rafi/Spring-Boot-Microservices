@@ -18,7 +18,7 @@
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <timestamp>
-                    <timeZone>UTC</timeZone>
+                    <timeZone>SYSTEM</timeZone>
                 </timestamp>
                 <message/>
                 <loggerName/>

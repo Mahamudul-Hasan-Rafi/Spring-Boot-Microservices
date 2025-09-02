@@ -1,0 +1,22 @@
+filebeat.inputs:
+  - type: filestream
+    id: accounts-logs
+    enabled: true
+    paths:
+      - /var/log/accounts/*.log
+  - type: filestream
+    id: loans-logs
+    enabled: true
+    paths:
+      - /var/log/loans/*.log
+  - type: filestream
+    id: cards-logs
+    enabled: true
+    paths:
+      - /var/log/cards/*.log
+
+output.console:
+  enabled: true
+  pretty: true
+
+logging.level: info

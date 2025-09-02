@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class LoansController {
+    public static final Logger logger = org.slf4j.LoggerFactory.getLogger(LoansController.class);
     private ILoansService iLoansService;
 
     LoanDetailsDto loanDetailsDto;
@@ -94,6 +96,7 @@ public class LoansController {
     @GetMapping("/fetch")
     public ResponseEntity<List<LoansDto>> fetchLoanDetails(@RequestHeader("eazybank-correlation-id") String correlationId, @Valid @RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber) {
         // Logic to fetch loan details
+        logger.debug("Loan details request received for mobile number: {}", mobileNumber);
         List<LoansDto> loansDto = iLoansService.fetchLoanDetails(correlationId, mobileNumber);
         return ResponseEntity.status(HttpStatus.OK).body(loansDto);
     }

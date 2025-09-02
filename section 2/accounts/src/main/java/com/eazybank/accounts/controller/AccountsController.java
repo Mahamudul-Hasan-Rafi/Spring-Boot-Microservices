@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +31,8 @@ import java.util.Map;
 @AllArgsConstructor
 @Validated
 public class AccountsController {
+
+    public static final Logger logger = LoggerFactory.getLogger(AccountsController.class);
 
     IAccountsService iAccountsService;
 
@@ -191,6 +195,7 @@ public class AccountsController {
 
     @GetMapping(path = "/contact-info")
     public ResponseEntity<AccountDetailsDto> getAccountDetails() {
+        logger.debug("Contact Info request received");
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(accountDetailsDto);
@@ -198,6 +203,7 @@ public class AccountsController {
 
     @GetMapping(path = "/customer-details")
     public ResponseEntity<CustomerDetailsDto> getCustomerDetails(@RequestHeader("eazybank-correlation-id") String correlationId, @RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber) {
+        logger.debug("Account details request received for mobile no: {}", mobileNumber);
         CustomerDetailsDto customerDetailsDto = iAccountsService.fetchCustomerDetails(correlationId, mobileNumber);
         return ResponseEntity
                 .status(HttpStatus.OK)

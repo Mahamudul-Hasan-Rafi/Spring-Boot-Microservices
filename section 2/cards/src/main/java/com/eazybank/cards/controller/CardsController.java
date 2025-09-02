@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +35,7 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class CardsController {
+    public static final Logger logger = LoggerFactory.getLogger(CardsController.class);
 
     @Autowired
     private ICardsService iCardsService;
@@ -87,8 +90,9 @@ public class CardsController {
     })
     @GetMapping("/fetch")
     public ResponseEntity<List<CardsDto>> fetchCardDetails(@RequestHeader("eazybank-correlation-id") String correlationId, @RequestParam
-                                                           @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits")
-                                                           String mobileNumber) {
+    @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits")
+    String mobileNumber) {
+        logger.debug("Start fetching card details for mobile number: {} ", mobileNumber);
         List<CardsDto> cardsDto = iCardsService.fetchCard(correlationId, mobileNumber);
         return ResponseEntity.status(HttpStatus.OK).body(cardsDto);
     }
@@ -167,6 +171,7 @@ public class CardsController {
 
     @GetMapping(path = "/card-details")
     public ResponseEntity<CardDetailsDto> getAccountDetails() {
+        logger.debug("Fetching static card details");
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(cardDetailsDto);

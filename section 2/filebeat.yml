@@ -1,22 +1,73 @@
 filebeat.inputs:
+  # Input for Accounts Microservice
   - type: filestream
-    id: accounts-logs
     enabled: true
+    id: accounts-input
     paths:
-      - /var/log/accounts/*.log
-  - type: filestream
-    id: loans-logs
-    enabled: true
-    paths:
-      - /var/log/loans/*.log
-  - type: filestream
-    id: cards-logs
-    enabled: true
-    paths:
-      - /var/log/cards/*.log
+      - "/app/accounts/logs/*.log"  # CHANGED: Container path, not host path
+    fields:
+      type: app-log
+      service: accounts-service
+    fields_under_root: true
+    json.keys_under_root: true
+    json.add_error_key: true
 
-output.console:
-  enabled: true
-  pretty: true
+  # Input for Cards Microservice
+  - type: filestream
+    enabled: true
+    id: cards-input
+    paths:
+      - "/app/cards/logs/*.log"  # CHANGED: Container path
+    fields:
+      type: app-log
+      service: cards-service
+    fields_under_root: true
+    json.keys_under_root: true
+    json.add_error_key: true
 
+  # Input for Loans Microservice
+  - type: filestream
+    enabled: true
+    id: loans-input
+    paths:
+      - "/app/loans/logs/*.log"  # CHANGED: Container path
+    fields:
+      type: app-log
+      service: loans-service
+    fields_under_root: true
+    json.keys_under_root: true
+    json.add_error_key: true
+
+# ======================= Elasticsearch template setting =======================
+setup.template.settings:
+  index.number_of_shards: 1
+
+# ================================== Outputs ===================================
+output.elasticsearch:
+  hosts: [ "10.11.200.109:9200" ]
+  indices:
+    - index: "microservices-logs-%{+yyyy.MM.dd}"
+  preset: balanced
+  protocol: "https"
+  username: "elastic"
+  password: "6_=M1RLL7gsu5avQcDZn"
+  ssl:
+    verification_mode: "none"
+
+# ================================= Processors =================================
+processors:
+  - decode_json_fields:
+      fields: [ "message" ]
+      target: ""
+      overwrite_keys: true
+  - add_docker_metadata: # ADDED: Enrich logs with Docker container metadata
+      host: "unix:///var/run/docker.sock"
+
+# ================================== Logging ===================================
 logging.level: info
+logging.to_files: true
+logging.files:
+  path: /usr/share/filebeat/logs
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644

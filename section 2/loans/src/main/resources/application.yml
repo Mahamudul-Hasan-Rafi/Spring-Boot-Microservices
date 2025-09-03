@@ -23,7 +23,8 @@ spring:
     active: dev
 
   config:
-    import: optional:configserver:http://myuser:mypassword@localhost:8071/
+    #import: optional:configserver:http://myuser:mypassword@localhost:8071/
+    import: configserver:http://myuser:mypassword@host.docker.internal:8071/
 
 
 logging:
@@ -60,7 +61,8 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      #defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://host.docker.internal:8761/eureka/
 
 info:
   app:

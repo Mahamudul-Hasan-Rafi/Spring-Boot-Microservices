@@ -16,7 +16,7 @@ services:
           cpus: '0.1'
           memory: 256M
     volumes:
-      - ./accounts/logs:/var/log/accounts
+      - ./accounts/logs:/app/accounts/logs
     networks:
       - eazybank_net
 
@@ -37,7 +37,7 @@ services:
           cpus: '0.1'
           memory: 256M
     volumes:
-      - ./loans/logs:/var/log/loans
+      - ./loans/logs:/app/loans/logs
     networks:
       - eazybank_net
 
@@ -58,18 +58,26 @@ services:
           cpus: '0.1'
           memory: 256M
     volumes:
-      - ./cards/logs:/var/log/cards
+      - ./cards/logs:/app/cards/logs
     networks:
       - eazybank_net
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:8.8.0
     container_name: filebeat
+    user: root
+    entrypoint: >
+      sh -c '
+      cp /usr/share/filebeat/filebeat.yml /usr/share/filebeat/filebeat.yml.tmp &&
+      chmod 600 /usr/share/filebeat/filebeat.yml.tmp &&
+      chown root:filebeat /usr/share/filebeat/filebeat.yml.tmp &&
+      exec filebeat -e -c /usr/share/filebeat/filebeat.yml.tmp
+      '
     volumes:
       - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - ./accounts/logs:/var/log/accounts:ro
-      - ./loans/logs:/var/log/loans:ro
-      - ./cards/logs:/var/log/cards:ro
+      - ./accounts/logs:/app/accounts/logs:ro
+      - ./loans/logs:/app/loans/logs:ro
+      - ./cards/logs:/app/cards/logs:ro
     networks:
       - eazybank_net
     depends_on:

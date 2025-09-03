@@ -9,6 +9,8 @@ WORKDIR /app
 # Copy the JAR file from the build stage
 COPY target/accounts-0.0.1-SNAPSHOT.jar app.jar
 
+RUN mkdir -p /app/accounts/logs && chown appuser:appgroup /app/accounts/logs
+
 # Adjust JVM options for better performance in containers
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
 

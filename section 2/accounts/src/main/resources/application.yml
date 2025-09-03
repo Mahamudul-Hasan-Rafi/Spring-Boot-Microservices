@@ -20,7 +20,8 @@ spring:
     password: guest
 
   config:
-    import: optional:configserver:http://myuser:mypassword@localhost:8071/
+    #import: optional:configserver:http://myuser:mypassword@localhost:8071/
+    import: configserver:http://myuser:mypassword@host.docker.internal:8071/
 
   profiles:
     active: dev
@@ -33,12 +34,18 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.cloud: DEBUG
-    org.springframework.context: DEBUG
-    org.springframework.amqp: DEBUG
-    org.springframework.rabbit: DEBUG
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+      springframework:
+        cloud: DEBUG
+        context: DEBUG
+        amqp: DEBUG
+        rabbit: DEBUG
     com:
       eazybank:
         accounts: DEBUG
@@ -65,7 +72,8 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      #defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://host.docker.internal:8761/eureka/
 
 info:
   app:

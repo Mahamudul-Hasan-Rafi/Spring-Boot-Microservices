@@ -8,9 +8,9 @@
 
     <appender name="jsonFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- Log file path inside container matching Docker volume mount -->
-        <file>/var/log/accounts/accounts-service.log</file>
+        <file>/app/accounts/logs/accounts-service.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>/var/log/accounts/accounts-service-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>/app/accounts/logs/accounts-service-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>7</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
@@ -18,7 +18,7 @@
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <timestamp>
-                    <timeZone>SYSTEM</timeZone>
+                    <timeZone>Asia/Dhaka</timeZone>
                 </timestamp>
                 <message/>
                 <loggerName/>

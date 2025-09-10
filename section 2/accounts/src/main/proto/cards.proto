@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package com.eazybank.cards;
+
+service CardsService {
+  rpc FetchCardDetails (FetchCardDetailsRequest) returns (FetchCardDetailsResponse);
+}
+
+message FetchCardDetailsRequest {
+  string correlation_id = 1;
+  string mobile_number = 2;
+}
+
+message CardsDto {
+  string mobile_number = 1;
+  string card_number = 2;
+  string card_type = 3;
+  string total_limit = 4;
+  string amount_used = 5;
+  string available_amount = 6;
+}
+
+message FetchCardDetailsResponse {
+  repeated CardsDto cards = 1;
+}

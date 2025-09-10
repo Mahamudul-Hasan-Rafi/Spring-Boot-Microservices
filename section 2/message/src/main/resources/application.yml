@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: MessagingService
+
+  cloud:
+    function:
+      definition: email|sms
+
+server:
+  port: 9091

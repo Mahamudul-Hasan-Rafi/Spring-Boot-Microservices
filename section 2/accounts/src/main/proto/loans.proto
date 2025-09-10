@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package com.eazybank.loans;
+
+service LoansService {
+  rpc FetchLoanDetails (FetchLoanDetailsRequest) returns (FetchLoanDetailsResponse);
+}
+
+message FetchLoanDetailsRequest {
+  string correlation_id = 1;
+  string mobile_number = 2;
+}
+
+message LoansDto {
+  string mobile_number = 1;
+  string loan_number = 2;
+  string loan_type = 3;
+  int32 total_loan = 4;
+  int32 amount_paid = 5;
+  int32 outstanding_amount = 6;
+}
+
+message FetchLoanDetailsResponse {
+  repeated LoansDto loans = 1;
+}

@@ -12,13 +12,6 @@ spring:
       ddl-auto: update
     show-sql: true
 
-  rabbitmq:
-    #host: host.docker.internal
-    host: 10.11.204.202
-    port: 5672
-    username: guest
-    password: guest
-
   config:
     import: optional:configserver:http://myuser:mypassword@localhost:8071/
     #import: configserver:http://myuser:mypassword@host.docker.internal:8071/
@@ -30,7 +23,75 @@ spring:
     openfeign:
       circuitbreaker:
         enabled: true
+    stream:
+      defaultBinder: kafka
+      bindings:
+        accountOpening-out-0:
+          destination: account-opening-topic
+          content-type: application/json
+          producer:
+            configuration:
+              key.serializer: org.apache.kafka.common.serialization.StringSerializer
+              value.serializer: org.springframework.kafka.support.serializer.JsonSerializer
+              acks: "all"
+              retries: 3
+              linger.ms: 10
+              batch.size: 16384
+              compression.type: gzip
+              max.block.ms: 5000
+              request.timeout.ms: 30000
+              enable.idempotence: true
+              buffer.memory: 33554432
+              max.in.flight.requests.per.connection: 3
 
+        accountOpening-in-0:
+          destination: account-opening-topic
+          group: ${spring.application.name}
+          content-type: application/json
+          consumer:
+            max-attempts: 3
+            auto-offset-reset: earliest
+            concurrency: 3
+            ack-mode: record
+            isolation-level: read_committed
+            properties:
+              spring.json.trusted.packages: '*'
+
+            retryable-exceptions:
+              java.lang.Exception: true
+              java.io.IOException: true
+              org.springframework.amqp.AmqpException: true
+              org.springframework.messaging.MessagingException: true
+              org.springframework.web.client.RestClientException: true
+              org.springframework.web.client.HttpServerErrorException: true
+              org.springframework.web.client.ResourceAccessException: true
+              org.springframework.kafka.KafkaException: true
+              org.apache.kafka.common.errors.TimeoutException: true
+              org.apache.kafka.common.errors.RetriableException: true
+              org.springframework.kafka.listener.ListenerExecutionFailedException: true
+
+            back-off-initial-interval: 1000
+            back-off-multiplier: 2.0
+            back-off-max-interval: 10000
+
+            enable-dlq: true
+            dlq-name: account-opening-dlq
+            dlq-binding:
+              destination: account-opening-dlq
+
+
+      kafka:
+        binder:
+          brokers: 10.11.204.202:9092
+
+  
+  rabbitmq:
+    #host: host.docker.internal
+    host: 10.11.204.202
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
 
 logging:
   level:
@@ -42,6 +103,8 @@ logging:
             sql:
               BasicBinder: TRACE
       springframework:
+        stream: DEBUG
+        integration: DEBUG
         cloud: DEBUG
         context: DEBUG
         amqp: DEBUG
@@ -72,8 +135,8 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      #defaultZone: http://localhost:8761/eureka/
-      defaultZone: http://host.docker.internal:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
+      #defaultZone: http://host.docker.internal:8761/eureka/
 
 info:
   app:

@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,9 @@ public class AccountsServiceImpl implements IAccountsService {
     public CardFeignClient cardFeignClient;
     public LoanFeignClient loanFeignClient;
 
-    private static final Logger log = LoggerFactory.getLogger(AccountsServiceImpl.class);
+    private StreamBridge streamBridge;
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountsServiceImpl.class);
 
     @Override
     @Transactional
@@ -49,10 +52,31 @@ public class AccountsServiceImpl implements IAccountsService {
 
             Accounts newAccount = createNewAccount(savedCustomer);
             accountsRepository.save(newAccount);
+
+            sendAccountCreationMessage(savedCustomer, newAccount);
+
+            logger.info("Account created successfully for customer with mobile number: {}", customerDto.getMobileNumber());
+
+            //notificationProducer.sendNotification("Hello " + savedCustomer.getName() + ", your account has been created successfully!", "email", savedCustomer.getEmail());
+            //notificationProducer.sendNotification("Hello " + savedCustomer.getName() + ", your account has been created successfully!", "sms", savedCustomer.getMobileNumber());
+            logger.info("Notification messages sent for customer with email: {}", customerDto.getEmail());
         } catch (Exception e) {
-            log.error("Failed to create account for customer: {}", e.getMessage());
+            logger.error("Failed to create account for customer: {}", e.getMessage());
             throw new RuntimeException("Failed to create account for customer: " + e.getMessage(), e);
         }
+    }
+
+    private void sendAccountCreationMessage(Customer savedCustomer, Accounts newAccount) {
+        AccountMessageDto accountMessageDto = new AccountMessageDto(
+                newAccount.getAccountNumber(),
+                savedCustomer.getName(),
+                savedCustomer.getEmail(),
+                savedCustomer.getMobileNumber(),
+                "Your account has been created successfully."
+        );
+
+        var result = streamBridge.send("accountOpening-out-0", accountMessageDto);
+        logger.info("Account creation message sent: {}", result);
     }
 
     @Override
@@ -130,7 +154,7 @@ public class AccountsServiceImpl implements IAccountsService {
 
             return true;
         } catch (Exception e) {
-            log.error("Failed to delete account for mobile number {}: {}", mobileNumber, e.getMessage());
+            logger.error("Failed to delete account for mobile number {}: {}", mobileNumber, e.getMessage());
             throw new RuntimeException("Failed to delete account for mobile number " + mobileNumber + ": " + e.getMessage(), e);
         }
 
@@ -138,7 +162,7 @@ public class AccountsServiceImpl implements IAccountsService {
 
     @Override
     public CustomerDetailsDto fetchCustomerDetails(String correlationId, String mobileNumber) {
-        log.debug("Correlation ID in Account Service: {}", correlationId);
+        logger.debug("Correlation ID in Account Service: {}", correlationId);
 
         Optional<CustomerDto> customerDto = customerRepository.findByMobileNumber(mobileNumber).map(
                 customer -> CustomerMapper.mapToCustomerDTO(customer, new CustomerDto())

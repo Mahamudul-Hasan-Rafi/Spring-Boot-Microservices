@@ -3,30 +3,11 @@ spring:
     name: MessagingService
 
   cloud:
-    function:
-      definition: email|sms
     stream:
       defaultBinder: kafka
-      bindings:
-        accountOpening-out-0:
-          destination: account-opening-topic
-          content-type: application/json
-          producer:
-            configuration:
-              key.serializer: org.apache.kafka.common.serialization.StringSerializer
-              value.serializer: org.springframework.kafka.support.serializer.JsonSerializer
-              acks: "all"
-              retries: 3
-              linger.ms: 10
-              batch.size: 16384
-              compression.type: gzip
-              max.block.ms: 5000
-              request.timeout.ms: 30000
-              enable.idempotence: true
-              buffer.memory: 33554432
-              max.in.flight.requests.per.connection: 3
 
-        accountOpening-in-0:
+      bindings:
+        input-in-0:
           destination: account-opening-topic
           group: ${spring.application.name}
           content-type: application/json
@@ -35,7 +16,7 @@ spring:
             auto-offset-reset: earliest
             concurrency: 3
             ack-mode: record
-            isolation-level: read_committed
+
             properties:
               spring.json.trusted.packages: '*'
 
@@ -59,7 +40,7 @@ spring:
             dlq-name: account-opening-dlq
             dlq-binding:
               destination: account-opening-dlq
-
+      
       
       kafka:
         binder:
@@ -80,6 +61,4 @@ logging:
     com.eazybank: INFO
     com.eazybank.messaging: DEBUG
     org.springframework.cloud.stream: DEBUG
-    org.springframework.amqp: DEBUG
-    org.springframework.rabbit: DEBUG
     org.springframework.integration: DEBUG

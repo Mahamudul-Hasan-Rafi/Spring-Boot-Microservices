@@ -17,6 +17,7 @@ public class AccountMessageFunctions {
     @Bean
     public Function<AccountMessageDto, AccountMessageDto> input() {
         return accountMessageDto -> {
+
             logger.info("Processing account message for account number: {}", accountMessageDto.accountNumber());
             // Here you can add the logic to send an email using the details from accountMessageDto
             // For example, you might call an EmailService to send the email
@@ -27,6 +28,8 @@ public class AccountMessageFunctions {
             System.out.println("Sending email to: " + accountMessageDto.email());
             System.out.println("Email subject: Account Notification");
             System.out.println("Email body: " + accountMessageDto.message());
+
+            //throw new RuntimeException();
 
             logger.info("Email sent successfully to: {}", accountMessageDto.email());
             return accountMessageDto;

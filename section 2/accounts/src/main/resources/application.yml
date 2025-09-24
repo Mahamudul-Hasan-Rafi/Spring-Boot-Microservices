@@ -83,7 +83,7 @@ spring:
       kafka:
         binder:
           brokers: 10.11.204.202:9092
-
+  
   
   rabbitmq:
     #host: host.docker.internal
@@ -118,14 +118,28 @@ management:
     web:
       exposure:
         include: "*"
+      basepath: /actuator
   info:
     env:
       enabled: true
   endpoint:
     health:
       show-details: always
-    shutdown:
-      access: unrestricted
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    enable:
+      all: true
+
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
 
 
 eureka:
